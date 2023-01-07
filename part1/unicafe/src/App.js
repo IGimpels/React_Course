@@ -28,6 +28,21 @@ const App = () => {
     count: bad
   }
 
+  const allFeedback = {
+    title: 'all',
+    count: good + neutral + bad
+  }
+
+  const avarageFeedback = {
+    title: 'avarage',
+    count: (good + neutral*0 + (bad*-1)) / (good + neutral + bad)
+  }
+
+  const positiveFeedback = {
+    title: 'positive',
+    count: (good) *100 / (good + neutral + bad)
+  }
+
   return (
     <>
       <Title text='give feedback'/>
@@ -41,7 +56,13 @@ const App = () => {
       <br/>
       <DisplayStatistic data={neutralFeedback} />
       <br/>
-      <DisplayStatistic data={badFeedback} />      
+      <DisplayStatistic data={badFeedback} />  
+      <br/>
+      <DisplayStatistic data={allFeedback} />      
+      <br/>
+      <DisplayStatistic data={avarageFeedback} />      
+      <br/>
+      <DisplayStatistic data={positiveFeedback} />      
       <br/>
     </>
   )
