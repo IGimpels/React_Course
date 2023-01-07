@@ -3,6 +3,38 @@ import { useState } from 'react'
 const Button = ({text, onClick}) => (<button onClick={onClick}>{text}</button>)
 const Title = ({text}) => (<h1>{text}</h1>)
 const DisplayStatistic = ({data}) => (<>{data.title} {data.count}</>)
+const Statistics = ({data}) => {
+
+  const [good, neutral, bad] = data
+  const all = {
+    title: 'all',
+    count: good.count + neutral.count + bad.count
+  }
+  const avarage = {
+    title: 'avarage',
+    count: (good.count*good.value + neutral.count*neutral.value + (bad.count*bad.value)) / (good.count + neutral.count + bad.count)
+  }
+  const positive = {
+    title: 'positive',
+    count: (good.count) *100 / (good.count + neutral.count + bad.count)
+  }
+
+  return (
+    <>
+    <DisplayStatistic data={good} />
+    <br/>
+    <DisplayStatistic data={neutral} />
+    <br/>
+    <DisplayStatistic data={bad} />  
+    <br/>
+    <DisplayStatistic data={all} />      
+    <br/>
+    <DisplayStatistic data={avarage} />      
+    <br/>
+    <DisplayStatistic data={positive} />     
+    </>
+  )
+}
 
 const App = () => {
 
@@ -17,30 +49,18 @@ const App = () => {
 
   const goodFeedback = {
     title: 'good',
-    count: good
+    count: good,
+    value: 1,
   }
   const neutralFeedback = {
     title: 'neutral',
-    count: neutral
+    count: neutral,
+    value: 0,
   }
   const badFeedback = {
     title: 'bad',
-    count: bad
-  }
-
-  const allFeedback = {
-    title: 'all',
-    count: good + neutral + bad
-  }
-
-  const avarageFeedback = {
-    title: 'avarage',
-    count: (good + neutral*0 + (bad*-1)) / (good + neutral + bad)
-  }
-
-  const positiveFeedback = {
-    title: 'positive',
-    count: (good) *100 / (good + neutral + bad)
+    count: bad,
+    value: -1,
   }
 
   return (
@@ -52,17 +72,7 @@ const App = () => {
         <Button text={badFeedback.title} onClick={addBadFeedback}/>
       </div>
       <Title text='statistics'/>
-      <DisplayStatistic data={goodFeedback} />
-      <br/>
-      <DisplayStatistic data={neutralFeedback} />
-      <br/>
-      <DisplayStatistic data={badFeedback} />  
-      <br/>
-      <DisplayStatistic data={allFeedback} />      
-      <br/>
-      <DisplayStatistic data={avarageFeedback} />      
-      <br/>
-      <DisplayStatistic data={positiveFeedback} />      
+      <Statistics data={[goodFeedback, neutralFeedback, badFeedback]}/>
       <br/>
     </>
   )
