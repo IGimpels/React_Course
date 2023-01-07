@@ -19,21 +19,26 @@ const Statistics = ({data}) => {
     count: (good.count) *100 / (good.count + neutral.count + bad.count)
   }
 
-  return (
-    <>
-    <DisplayStatistic data={good} />
-    <br/>
-    <DisplayStatistic data={neutral} />
-    <br/>
-    <DisplayStatistic data={bad} />  
-    <br/>
-    <DisplayStatistic data={all} />      
-    <br/>
-    <DisplayStatistic data={avarage} />      
-    <br/>
-    <DisplayStatistic data={positive} />     
-    </>
-  )
+  if(good.count + neutral.count + bad.count === 0) 
+    return (
+      <>No feedback given</>
+    )
+  else 
+    return (
+      <>
+      <DisplayStatistic data={good} />
+      <br/>
+      <DisplayStatistic data={neutral} />
+      <br/>
+      <DisplayStatistic data={bad} />  
+      <br/>
+      <DisplayStatistic data={all} />      
+      <br/>
+      <DisplayStatistic data={avarage} />      
+      <br/>
+      <DisplayStatistic data={positive} />     
+      </>
+    )
 }
 
 const App = () => {
