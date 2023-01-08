@@ -1,5 +1,5 @@
 import { useState, useEffect} from 'react'
-import axios from 'axios'
+import personsClient from './services/persons'
 
 const Filter = ({searchValue, onSearchValueChanged}) => {
   return (<div>filter shown with <input value={searchValue} onChange={onSearchValueChanged}/></div>)
@@ -29,8 +29,8 @@ const App = () => {
   const [searchName, setSearchName] = useState('')
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:3001/persons').then(response => {
-      setPersons(response.data)
+    personsClient.getAll().then(personsList => {
+      setPersons(personsList)
     })
   },[])
 
@@ -49,8 +49,8 @@ const App = () => {
       number: newNumber
     }
 
-    axios.post('http://127.0.0.1:3001/persons', newPerson).then(response => {      
-      setPersons(persons.concat(response.data))
+    personsClient.add(newPerson).then(person => {      
+      setPersons(persons.concat(person))
     })
     setNewName('')
     setNewNumber('')
