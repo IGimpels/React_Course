@@ -1,63 +1,11 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+import Filter from "./components/Filter";
+import CountryDetails from "./components/CountryDetails";
+import CountryList from "./components/CountryList";
 
 const api_key = process.env.REACT_APP_API_KEY
 
-const Filter = ({ search, onSearchChanged }) =>
-  <>find countries <input value={search} onChange={onSearchChanged} /></>
-
-const Weather = ({ weather }) => {
-  if (weather) {
-    return (
-      <div>
-        <h2>Weather</h2>
-        <div>temperature {weather.temperature} Celcius</div>
-        <img alt={weather.description} src={weather.icon} />
-        <div>wind {weather.windSpeed} m/s</div>
-      </div>
-    )
-  }
-  return <></>
-}
-const CountryDetails = ({ country, weather }) => {
-  if (country)
-    return (
-      <div>
-        <h2>{country.name.common}</h2>
-        <div>capital {country.capital.join(' ,')}</div>
-        <div>area {country.area}</div>
-        <h3>languages</h3>
-        <ul>
-          {Object.values(country.languages).map((v) => <li key={v}>{v}</li>)}
-        </ul>
-        <img alt={country.name.common} src={country.flags.png} />
-        <Weather weather={weather} />
-      </div>
-    )
-
-  return <></>
-}
-
-const SearchResult = ({ countriesToShow, setSelectedCountry }) => {
-
-  const onShowHandler = (event) => {
-    event.preventDefault()
-    setSelectedCountry(event.target.value)
-  }
-
-  if (countriesToShow.length >= 10)
-    return <div>Too many matches, specify another filter</div>
-
-  if (countriesToShow.length === 1) {
-    return <></>
-  }
-
-  return (
-    <>
-      {countriesToShow.map((c, i) => <div key={c.name.common}>{c.name.common} <button value={i} onClick={onShowHandler}>show</button></div>)}
-    </>
-  );
-}
 const App = () => {
   const [countries, setCountries] = useState([])
   const [search, setSearch] = useState('');
@@ -66,7 +14,7 @@ const App = () => {
 
   const countriesToShow = countries.filter(c => c.name.common.toLowerCase().indexOf(search.toLowerCase()) >= 0)
   const selectedContryToShowIndex = countriesToShow.length === 1 ? 0 : selectedCountryIndex
-  const countryToShowDetails = countriesToShow[selectedContryToShowIndex]
+  const countryToShowDetails = selectedContryToShowIndex === -1 ? null : countriesToShow[selectedContryToShowIndex]
 
   const onSearchChanged = (event) => {    
     setSelectedCountryIndex(-1)
@@ -93,7 +41,7 @@ const App = () => {
   return (
     <>
       <Filter search={search} onSearchChanged={onSearchChanged} />
-      <SearchResult countriesToShow={countriesToShow} setSelectedCountry={(i) => setSelectedCountryIndex(i)} />
+      <CountryList countriesToShow={countriesToShow.length === 1 ? [] : countriesToShow} setSelectedCountry={(index) => setSelectedCountryIndex(index)} />
       <CountryDetails country={countryToShowDetails} weather={weather} />
     </>
   )
