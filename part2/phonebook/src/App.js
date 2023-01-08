@@ -37,19 +37,29 @@ const App = () => {
 
   const addNewName = (event) => {
     event.preventDefault()
+    
     if(newName === ''){
       alert(`${newName} can't add empty person`)
       return
     }
-    if(persons.some(p => p.name === newName)){
-      alert(`${newName} is already added to phonebook`)
+    const duplicates = persons.filter(p => p.name === newName)
+
+    if(duplicates.length>0){      
+      if(!window.confirm(`${duplicates[0].name} is already added to phonebook, replace the old number with a new one?`))
+        return      
+      
+        personsClient.update({...duplicates[0], number : newNumber}).then((updatedPerson) => {
+        setPersons(persons.map((p) => p.id !== updatedPerson.id ? p : updatedPerson))         
+      })
+      setNewName('')
+      setNewNumber('')
       return
     }
+    
     const newPerson = {
       name : newName,
       number: newNumber
     }
-
     personsClient.add(newPerson).then(person => {      
       setPersons(persons.concat(person))
     })
