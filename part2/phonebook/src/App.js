@@ -1,6 +1,23 @@
 import { useState, useEffect} from 'react'
 import personsClient from './services/persons'
 
+const Notification = ({message}) => {
+
+  if(message === null)
+    return <></>
+  const notificationStyle = {
+    width: '100%',
+    color: 'green',
+    border: '3px solid green',
+    borderRadius: '5px',
+    backgroundColor: 'lightgray',
+    padding: '15px',
+    fontSize: '22px',
+
+  }
+  return <div style={notificationStyle}>{message}</div>
+}
+
 const Filter = ({searchValue, onSearchValueChanged}) => {
   return (<div>filter shown with <input value={searchValue} onChange={onSearchValueChanged}/></div>)
 }
@@ -28,6 +45,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchName, setSearchName] = useState('')
+  const [notificationText, setNotificationText] = useState(null)
 
   useEffect(() => {
     personsClient.getAll().then(personsList => {
@@ -38,7 +56,7 @@ const App = () => {
   const addNewName = (event) => {
     event.preventDefault()
     
-    if(newName === ''){
+    if(newName === ''){    
       alert(`${newName} can't add empty person`)
       return
     }
@@ -50,6 +68,8 @@ const App = () => {
       
         personsClient.update({...duplicates[0], number : newNumber}).then((updatedPerson) => {
         setPersons(persons.map((p) => p.id !== updatedPerson.id ? p : updatedPerson))         
+        setNotificationText(`Updated ${updatedPerson.name}`)
+        setTimeout(() => setNotificationText(null), 5000)
       })
       setNewName('')
       setNewNumber('')
@@ -62,6 +82,8 @@ const App = () => {
     }
     personsClient.add(newPerson).then(person => {      
       setPersons(persons.concat(person))
+      setNotificationText(`Added ${person.name}`)
+      setTimeout(() => setNotificationText(null), 5000)
     })
     setNewName('')
     setNewNumber('')
@@ -72,6 +94,8 @@ const App = () => {
       return
     personsClient.deleteById(person.id).then( () => {
       setPersons(persons.filter(p => p.id !== person.id))
+      setNotificationText(`Deleted ${person.name}`)
+      setTimeout(() => setNotificationText(null), 5000)
     })
   }
 
@@ -90,6 +114,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={notificationText}/>
       <h2>Phonebook</h2>      
       <Filter searchValue={searchName} onSearchValueChanged={onSearchNameChanged}/>
       <h2>add a new</h2>      
