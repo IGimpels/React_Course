@@ -19,8 +19,9 @@ const NewPersonForm = ({onNewSubmit, onNameInputChanged, onPhoneNumberInputChang
   )
 }
 
-const Persons = ({persons}) => 
-        persons.map(p => <div key={p.name}>{p.name} {p.number}</div>)
+const Persons = ({persons, onDelete}) =>  
+  persons.map(p => <div key={p.name}>{p.name} {p.number} <button onClick={() => onDelete(p)}>delete</button></div>)
+
 
 const App = () => {  
   const [persons, setPersons] = useState([]) 
@@ -56,6 +57,14 @@ const App = () => {
     setNewNumber('')
   }
 
+  const deletePerson = (person) => {
+    if(!window.confirm(`Delete ${person.name}`))
+      return
+    personsClient.deleteById(person.id).then( () => {
+      setPersons(persons.filter(p => p.id !== person.id))
+    })
+  }
+
   const personsToShow = searchName === '' ? persons : persons.filter(p => p.name.toLowerCase().indexOf(searchName.toLowerCase()) !== -1)
 
   const onNameInputChanged = (event) => {
@@ -76,7 +85,7 @@ const App = () => {
       <h2>add a new</h2>      
       <NewPersonForm onNewSubmit={addNewName} newName={newName} newNumber={newNumber} onNameInputChanged={onNameInputChanged} onPhoneNumberInputChanged={onPhoneNumberInputChanged} />
       <h2>Numbers</h2>
-      <Persons persons={personsToShow}/>
+      <Persons persons={personsToShow} onDelete={deletePerson}/>
     </div>
   )
 }
