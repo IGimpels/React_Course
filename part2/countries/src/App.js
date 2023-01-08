@@ -41,6 +41,7 @@ const CountryDetails = ({ country, weather }) => {
 const SearchResult = ({ countriesToShow, setSelectedCountry }) => {
 
   const onShowHandler = (event) => {
+    event.preventDefault()
     setSelectedCountry(event.target.value)
   }
 
@@ -67,7 +68,7 @@ const App = () => {
   const selectedContryToShowIndex = countriesToShow.length === 1 ? 0 : selectedCountryIndex
   const countryToShowDetails = countriesToShow[selectedContryToShowIndex]
 
-  const onSearchChanged = (event) => {
+  const onSearchChanged = (event) => {    
     setSelectedCountryIndex(-1)
     setSearch(event.target.value)
   }
