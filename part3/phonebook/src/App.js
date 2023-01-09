@@ -39,10 +39,19 @@ const App = () => {
         setPersons(persons.map((p) => p.id !== updatedPerson.id ? p : updatedPerson))
         setNotification({ message: `Updated ${updatedPerson.name}`, isError: false })
         setTimeout(() => setNotification(null), 5000)
-      }).catch(() => {
-        setPersons(persons.filter(p => p.id !== duplicate.id))
-        setNotification({ message: `Information of ${duplicate.name} has already been removed from server`, isError: true })
-        setTimeout(() => setNotification(null), 5000)
+      }).catch((r) => {
+        if(r.response.status === 404){
+          setPersons(persons.filter(p => p.id !== duplicate.id))
+          setNotification({ message: `Information of ${duplicate.name} has already been removed from server`, isError: true })
+          setTimeout(() => setNotification(null), 5000)
+          return
+        }
+        if(r.response.status  === 400){
+          console.log(r)
+          setNotification({ message: r.response.data.error, isError: true })
+          setTimeout(() => setNotification(null), 5000)
+          return
+        }
       })
       setNewName('')
       setNewNumber('')
@@ -62,6 +71,12 @@ const App = () => {
         setNotification({ message: `${newPerson.name} is already added to phonebook`, isError: true })
         setTimeout(() => setNotification(null), 5000)
         setTriggerPersonListUpdate(!triggerPersonListUpdate)
+        return
+      }
+      if(r.response.status  === 400){
+        setNotification({ message: r.response.data.error, isError: true })
+        setTimeout(() => setNotification(null), 5000)
+        return
       }
     })
     setNewName('')
