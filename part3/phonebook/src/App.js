@@ -12,12 +12,13 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [searchName, setSearchName] = useState('')
   const [notification, setNotification] = useState(null)
+  const [triggerPersonListUpdate, setTriggerPersonListUpdate] = useState(false)
 
   useEffect(() => {
     personsClient.getAll().then(personsList => {
       setPersons(personsList)
     })
-  }, [])
+  }, [triggerPersonListUpdate])
 
   const addNewName = (event) => {
     event.preventDefault()
@@ -56,6 +57,12 @@ const App = () => {
       setPersons(persons.concat(person))
       setNotification({ message: `Added ${person.name}`, isError: false })
       setTimeout(() => setNotification(null), 5000)
+    }).catch(r => {
+      if(r.response.status  === 409){
+        setNotification({ message: `${newPerson.name} is already added to phonebook`, isError: true })
+        setTimeout(() => setNotification(null), 5000)
+        setTriggerPersonListUpdate(!triggerPersonListUpdate)
+      }
     })
     setNewName('')
     setNewNumber('')
